@@ -48,27 +48,25 @@ def bfs_path(graph, source):
       that vertex in the shortest path tree.
     """
     def bp_recursive(past_nodes, frontier, path):
-        print('top')
-        print(past_nodes)
-        print(frontier)
-        print(path)
-
         if len(frontier) == 0:
             return path
         
         else:
-            past_nodes = past_nodes or frontier
             tmp = set()
+
             for node in frontier:
-                for adjacent_node in graph[node[0]]:
-                    
+                past_nodes.add(node)
+
+                for adjacent_node in graph[node]:
                     if adjacent_node in past_nodes:
+                        pass
+                    elif adjacent_node in frontier:
                         pass
                     
                     else:
                         path[adjacent_node] = node
                         tmp.add(adjacent_node)
-            
+
             frontier = tmp
             return bp_recursive(past_nodes, frontier, path)
         
@@ -85,18 +83,6 @@ def get_sample_graph():
             'd': {}
             }
 
-graph = {
-              's': {('a', 1), ('c', 4)},
-              'a': {('b', 2)}, # 'a': {'b'},
-              'b': {('c', 1), ('d', 4)}, 
-              'c': {('d', 3)},
-              'd': {},
-              'e': {('d', 0)}
-          }
-bfs_path(graph, 's')
-
-
-
     
 def get_path(parents, destination):
     """
@@ -104,26 +90,23 @@ def get_path(parents, destination):
       The shortest path from the source node to this destination node 
       (excluding the destination node itself). See test_get_path for an example.
     """
-    
-    def gp_recursive(result, destination):
-        
-        if destination == None:
-            return result
+    def gp_recursive(parents, destination, path):
+
+        if parents[destination] == 's':
+            path.append('s')
+            return path
         
         else:
-            is_traceable = False
-            for parent in parents:
-                if parent == parents[destination]:
-                    destination = parent
-                    result = result + parents[destination]
-                    is_traceable = True
-            if is_traceable:
-                destination = None
-            return gp_recursive(result, destination)
-        
-    result = parents[destination]
-    return gp_recursive(result, destination)
+            path.append(parents[destination])
+            return gp_recursive(parents, parents[destination], path)
+            
+    path = [destination]
+    path = gp_recursive(parents, destination, path)
 
+    strres = ''
+    i = 0
+    while i < len(path) - 1:
+        strres += path[len(path) - i - 1]
+        i += 1
 
-
-
+    return strres
